@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH -p linlab
+#SBATCH -n TASKNUMBER
+#SBATCH -J SYSTEMNAME1
+#SBATCH -o runout.%j
+#SBATCH -e runerr.%j
+#SBATCH -t 7-00:00:00
+#SBATCH --export=ALL
+#SBATCH --mem-per-cpu=1G
+
+module load openmpi/2.1.2
+module load libmatheval
+module load cuda/10.2
+module load gcc/7.3.0
+
+export GMXLIB=/cluster/tufts/ylin12/tim/localGMXLIB
+export PLUMED_KERNEL=/cluster/tufts/ysl8/jovan/gromacs_linlab_avx2/plumed/lib/libplumedKernel.so
+source /cluster/tufts/ysl8/jovan/gromacs_linlab_avx2/bin/GMXRC.bash
+
+mpiexec gmx_mpi mdrun -v -resethway -plumed bemeta -multi REPLICANUMBER -replex 2500 -s start -deffnm prod
+python check_trajectory.py --seq SYSTEMNAME
