@@ -1,3 +1,4 @@
+import re
 import MDAnalysis as mda
 import os
 import sys
@@ -6,9 +7,12 @@ import optparse
 import numpy as np
 from MDAnalysis.lib.distances import calc_dihedrals
 from MDAnalysis.analysis.dihedrals import Dihedral
-def get_trajectory_files():
+def get_trajectory_files(seq):
+    neutral_start_ind = len(seq) * 2
+    neutral_end_ind = neutral_start_ind + 5
+    neutral_range = [i for i in range(neutral_start_ind, neutral_end_ind)]
     all_files = os.listdir()
-    trajectory_files = [i for i in all_files if i[-3:] == "xtc"]
+    trajectory_files = [i for i in all_files if i[-3:] == "xtc" and int(re.search(r"\d{1,2}", i).group(0)) in neutral_range]
     topology_files = [i for i in all_files if i[-3:] == "gro"]
 
     trajectory_files.sort()
@@ -144,17 +148,17 @@ if __name__ == "__main__":
         mask2 = pick_out_chirality(chirality, seq)
         if not mask1.flatten()[0]:
             print("\n!!!Cis Bond Found!!!\n")
-            raise ValueError
+            input("\nPress Enter to continue...\n")
         else:
             print("\nNo Cis Bond Found\n")
         if not mask2.flatten()[0]:
             print("\n!!!Chirality Not the Same As Declared!!!\n")
-            raise ValueError
+            input("\nPress Enter to continue...\n")
         else:
             print("\nChirality Is the Same As Declared\n")
 
     else:
-        topology_files, trajectory_files = get_trajectory_files()
+        topology_files, trajectory_files = get_trajectory_files(seq)
         if not trajectory_files:
             sys.exit("\nExiting...\nNo Trajectory Files Found...\n")
         if len(topology_files) > 1:
