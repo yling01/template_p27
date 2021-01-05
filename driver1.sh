@@ -3,7 +3,7 @@ echo "Enter the sequence with uppercase letter indicating L-aa and lowercase let
 read sequence
 sed -i s/SEQUENCETOCHANGE/${sequence}/ driver2.sh
 
-initial_dir=/cluster/tufts/ylin12/tim/ML/test_0723/initial-structure-generator/Result
+initial_dir=/cluster/tufts/ylin12/tim/extraSimulation/initialStructure/Result
 echo "!!!Note: initial structures are taken from " ${initial_dir}
 sleep 2
 for i in 1 2
